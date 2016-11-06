@@ -1,17 +1,72 @@
 #from functools import wraps
 import sys
 import inspect
-from .task_runner import TaskRunner
 from .task import Task
+from argparse import ArgumentParser
 
 class Tasket():
-    runner = TaskRunner()
+    tasks = {}
 
     def __init__(self):
         pass
 
+    @staticmethod
+    def add_task(task):
+        Tasket.tasks[task.name] = task
+
+    @staticmethod
+    def find(name):
+        if name not in Tasket.tasks:
+            return None
+        else:
+            return Tasket.tasks[name]
+
+    @staticmethod
+    def has_task(name):
+        if name not in Tasket.tasks:
+            return False
+        else:
+            return True
+
+
+    @staticmethod
+    def get_tasks():
+        return list(Tasket.tasks.values())
+
     def run(self, argv=sys.argv):
-        Tasket.runner.run(argv)
+        print('task runner running')
+        parser = ArgumentParser()
+        parser.add_argument('targets', nargs='*')
+        args = parser.parse_args(argv[1:])
+
+        if not args.targets:
+            parser.print_help()
+            sys.exit(0)
+
+        # validate tasks
+        for task in Tasket.get_tasks():
+            for d in task.dependencies:
+                if not Tasket.has_task(d):
+                    parser.error('could not find dependency for task %s: %s' % (task.name, d))
+
+        # validate target arguments
+        for target_name in args.targets:
+            if not Tasket.find(target_name):
+                parser.error('could not find target: %s' % target_name)
+
+
+        # run the targets in order
+        for name in args.targets:
+            task = Tasket.find(name)
+            # first run all the dependencies
+            for d in task.dependencies:
+                dependency_task = Tasket.find(d)
+                dependency_task.run(args)
+
+
+            # run the task itself
+            task.run(args)
+
 
 
 def task(name='', dependencies=[]):
@@ -21,7 +76,7 @@ def task(name='', dependencies=[]):
         task_name = func.__name__
         dependencies = []
         current_task = Task(task_name, func, dependencies)
-        Tasket.runner.add_task(current_task)
+        Tasket.add_task(current_task)
         def wrapper(*args, **kwargs):
             # TODO call with our args
             func(args)
@@ -35,7 +90,7 @@ def task(name='', dependencies=[]):
             if name == '':
                 task_name = func.__name__
             current_task = Task(task_name, func, dependencies)
-            Tasket.runner.add_task(current_task)
+            Tasket.add_task(current_task)
             
             def wrapper(*args, **kwargs):
                 print('running the wrapper for %s' % current_task.name)

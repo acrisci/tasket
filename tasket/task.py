@@ -3,6 +3,13 @@ class Task():
         self.name = name
         self.dependencies = dependencies
         self.func = func
+        self.has_run = False
+        self.result = None
 
     def run(self, args):
-        return self.func(args)
+        if self.has_run:
+            return self.result
+
+        self.result = self.func(args)
+        self.has_run = True
+        return self.result

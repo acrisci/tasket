@@ -12,4 +12,8 @@ def generate(args):
 def build(args):
     print('building with args = %s' % args)
 
+@task(dependencies=['generate', 'build'])
+def release(args):
+    print('releasing with args = %s' % args)
+
 app.run()
