@@ -2,7 +2,7 @@
 import sys
 import inspect
 from .task import Task
-from argparse import ArgumentParser
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 class Tasket():
     tasks = {}
@@ -33,10 +33,32 @@ class Tasket():
     def get_tasks():
         return list(Tasket.tasks.values())
 
+    @staticmethod
+    def get_epilog():
+        target_texts = ["\ntargets:"]
+
+        # right justification of the text in length of spaces
+        just_len = max(len(name) for name in
+                       [n.name for n in Tasket.get_tasks()])
+        just_len += 5
+
+        # TODO: it would be nice to order the tasks by dependencies here,
+        # putting tasks that are lower in the chain first
+        for task in Tasket.get_tasks():
+            txt = "  {}".format(task.name).ljust(just_len)
+            txt += "- {}".format(task.description)
+            target_texts.append(txt)
+
+        return str.join("\n", target_texts)
+
+
     def run(self, argv=sys.argv):
         print('task runner running')
-        parser = ArgumentParser()
-        parser.add_argument('targets', nargs='*')
+        parser = ArgumentParser(epilog=Tasket.get_epilog(),
+                                formatter_class=RawTextHelpFormatter)
+
+        parser.add_argument('targets',
+                            nargs='*')
         args = parser.parse_args(argv[1:])
 
         if not args.targets:
@@ -69,7 +91,7 @@ class Tasket():
 
 
 
-def task(name='', dependencies=[]):
+def task(name='', dependencies=[], description=''):
     if callable(name):
         # the decorator was given with no arguments
         func = name
@@ -89,7 +111,7 @@ def task(name='', dependencies=[]):
             task_name = name
             if name == '':
                 task_name = func.__name__
-            current_task = Task(task_name, func, dependencies)
+            current_task = Task(task_name, func, dependencies, description)
             Tasket.add_task(current_task)
             
             def wrapper(*args, **kwargs):
