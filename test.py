@@ -8,14 +8,18 @@ app = Tasket()
 def generate(args):
     print('generating with args = %s' % args)
 
-@task(dependencies=['generate'],
-      description='Build the project')
+@task(dependencies=['generate'])
 def build(args):
+    """Build the project"""
     print('building with args = %s' % args)
 
-@task(dependencies=['generate', 'build'],
-      description='Send the packages to the release servers')
+@task(dependencies=['generate', 'build'])
 def release(args):
+    """
+    Send the packages to the release servers
+
+    More description here
+    """
     print('releasing with args = %s' % args)
 
 app.run()

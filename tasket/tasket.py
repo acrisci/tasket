@@ -91,7 +91,7 @@ class Tasket():
 
 
 
-def task(name='', dependencies=[], description=''):
+def task(name='', dependencies=[]):
     if callable(name):
         # the decorator was given with no arguments
         func = name
@@ -111,7 +111,7 @@ def task(name='', dependencies=[], description=''):
             task_name = name
             if name == '':
                 task_name = func.__name__
-            current_task = Task(task_name, func, dependencies, description)
+            current_task = Task(task_name, func, dependencies)
             Tasket.add_task(current_task)
             
             def wrapper(*args, **kwargs):

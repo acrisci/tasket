@@ -1,11 +1,20 @@
 class Task():
-    def __init__(self, name, func, dependencies=[], description=''):
+    def __init__(self, name, func, dependencies=[]):
         self.name = name
         self.dependencies = dependencies
         self.func = func
         self.has_run = False
         self.result = None
-        self.description = description
+
+    @property
+    def description(self):
+        '''The description of a task is the first line of the doc string'''
+        doc = self.func.__doc__
+
+        if not doc:
+            return ''
+
+        return doc.lstrip().split("\n")[0].rstrip()
 
     def run(self, args):
         if self.has_run:
