@@ -9,7 +9,7 @@ class Tasket():
     tasks = {}
 
     def __init__(self):
-        pass
+        self.parser = ArgumentParser(formatter_class=RawTextHelpFormatter)
 
     @staticmethod
     def add_task(task):
@@ -53,13 +53,21 @@ class Tasket():
         return str.join("\n", target_texts)
 
 
+    def add_argument(self, *args, **kwargs):
+        '''
+        Add an argument to the task runner. Takes the same args and kwargs as
+        argparse.ArgumentParser::add_argument().
+        '''
+        self.parser.add_argument(*args, **kwargs)
+
+
     def run(self, argv=sys.argv):
         # XXX won't work if they chdir before the call to run
         script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+        parser = self.parser
 
         print('task runner running')
-        parser = ArgumentParser(epilog=Tasket.get_epilog(),
-                                formatter_class=RawTextHelpFormatter)
+        parser.epilog = Tasket.get_epilog()
 
         parser.add_argument('targets',
                             nargs='*')

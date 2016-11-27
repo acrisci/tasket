@@ -31,7 +31,6 @@ app.run()
 
 ## TODO
 
-* Add arguments
 * Subtaskets
 * Built in help command
 * Retry file

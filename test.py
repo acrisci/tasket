@@ -8,10 +8,12 @@ app = Tasket()
 def generate(args):
     print('generating with args = %s' % args)
 
+
 @task(dependencies=['generate'])
 def build(args):
     """Build the project"""
     print('building with args = %s' % args)
+
 
 @task(dependencies=['generate', 'build'])
 def release(args):
@@ -22,4 +24,11 @@ def release(args):
     """
     print('releasing with args = %s' % args)
 
-app.run()
+
+app.add_argument('--build-type',
+                 default='Debug',
+                 choices=['Debug', 'Release'])
+
+
+if __name__ == '__main__':
+    app.run()
