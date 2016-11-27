@@ -89,17 +89,21 @@ class Tasket():
                 parser.error('could not find target: %s' % target_name)
 
 
-        # run the targets in order
-        for name in args.targets:
-            task = Tasket.find(name)
-            # first run all the dependencies
-            for d in task.dependencies:
-                dependency_task = Tasket.find(d)
-                dependency_task.run(args, script_dir)
+        try:
+            # run the targets in order
+            for name in args.targets:
+                task = Tasket.find(name)
+                # first run all the dependencies
+                for d in task.dependencies:
+                    dependency_task = Tasket.find(d)
+                    dependency_task.run(args, script_dir)
 
 
-            # run the task itself
-            task.run(args, script_dir)
+                # run the task itself
+                task.run(args, script_dir)
+        except Exception as e:
+            # TODO write the rety file
+            raise e
 
 
 def task(name='', dependencies=[]):

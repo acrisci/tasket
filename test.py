@@ -25,6 +25,19 @@ def release(args):
     print('releasing with args = %s' % args)
 
 
+@task(dependencies=['release'])
+def fail_depends(args):
+    '''This failing dependency demonstrates the retry feature'''
+    print('failing')
+    #raise Exception('fail-depends has failed!')
+    pass
+
+
+@task(dependencies=['fail_depends'])
+def fail(args):
+    print('not reached')
+
+
 app.add_argument('--build-type',
                  default='Debug',
                  choices=['Debug', 'Release'])
