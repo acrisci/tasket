@@ -3,7 +3,7 @@ import os
 class Task():
     def __init__(self, name, func, dependencies=[]):
         self.name = name
-        self.dependencies = dependencies
+        self.dependencies = [d.replace('_', '-') for d in dependencies]
         self.func = func
         self.has_run = False
         self.result = None

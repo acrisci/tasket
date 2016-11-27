@@ -110,7 +110,7 @@ def task(name='', dependencies=[]):
     if callable(name):
         # the decorator was given with no arguments
         func = name
-        task_name = func.__name__
+        task_name = func.__name__.replace('_', '-')
         dependencies = []
         current_task = Task(task_name, func, dependencies)
         Tasket.add_task(current_task)
@@ -125,7 +125,7 @@ def task(name='', dependencies=[]):
         def decorator(func):
             task_name = name
             if name == '':
-                task_name = func.__name__
+                task_name = func.__name__.replace('_', '-')
             current_task = Task(task_name, func, dependencies)
             Tasket.add_task(current_task)
             
