@@ -15,7 +15,7 @@ def build(args):
     print('building with args = %s' % args)
 
 
-@task(dependencies=['generate', 'build'])
+@task(dependencies=['build'])
 def release(args):
     """
     Send the packages to the release servers
@@ -36,6 +36,18 @@ def fail_depends(args):
 @task(dependencies=['fail_depends'])
 def fail(args):
     print('not reached')
+
+
+@task(dependencies=['generate', 'circular2'])
+def circular1(args):
+    '''This tests how circular dependencies work'''
+    print('running circular1')
+
+
+@task(dependencies=['circular1'])
+def circular2(args):
+    '''This tests how circular dependencies work'''
+    print('running circular2')
 
 
 app.add_argument('--build-type',

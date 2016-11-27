@@ -31,6 +31,24 @@ class Tasket():
 
 
     @staticmethod
+    def get_dependencies(task):
+        def _get_dependencies(task):
+            # XXX I'm not sure how this works
+            ret = []
+            for name in reversed(task.dependencies):
+                dep_task = Tasket.find(name)
+                ret.append(dep_task)
+                dep_deps = _get_dependencies(dep_task)
+                for d in dep_deps:
+                    if d not in ret:
+                        ret.append(d)
+
+            return ret
+
+        return reversed(_get_dependencies(task))
+
+
+    @staticmethod
     def get_tasks():
         return list(Tasket.tasks.values())
 
@@ -94,9 +112,8 @@ class Tasket():
             for name in args.targets:
                 task = Tasket.find(name)
                 # first run all the dependencies
-                for d in task.dependencies:
-                    dependency_task = Tasket.find(d)
-                    dependency_task.run(args, script_dir)
+                for d in Tasket.get_dependencies(task):
+                    d.run(args, script_dir)
 
 
                 # run the task itself
