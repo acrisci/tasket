@@ -28,3 +28,18 @@ def build(args):
 
 app.run()
 ```
+
+## TODO
+
+* Add arguments
+* Subtaskets
+* Built in help command
+* Retry file
+* No dependencies run
+* Documentation
+
+### Future Todos
+
+* CI Website
+* Cross-machine subtaskets
+* Plugins
