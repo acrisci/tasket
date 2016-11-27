@@ -1,6 +1,7 @@
 #from functools import wraps
 import sys
 import inspect
+import os
 from .task import Task
 from argparse import ArgumentParser, RawTextHelpFormatter
 
@@ -53,6 +54,9 @@ class Tasket():
 
 
     def run(self, argv=sys.argv):
+        # XXX won't work if they chdir before the call to run
+        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+
         print('task runner running')
         parser = ArgumentParser(epilog=Tasket.get_epilog(),
                                 formatter_class=RawTextHelpFormatter)
@@ -83,12 +87,11 @@ class Tasket():
             # first run all the dependencies
             for d in task.dependencies:
                 dependency_task = Tasket.find(d)
-                dependency_task.run(args)
+                dependency_task.run(args, script_dir)
 
 
             # run the task itself
-            task.run(args)
-
+            task.run(args, script_dir)
 
 
 def task(name='', dependencies=[]):

@@ -1,3 +1,5 @@
+import os
+
 class Task():
     def __init__(self, name, func, dependencies=[]):
         self.name = name
@@ -16,7 +18,9 @@ class Task():
 
         return doc.lstrip().split("\n")[0].rstrip()
 
-    def run(self, args):
+    def run(self, args, cwd):
+        os.chdir(cwd)
+
         if self.has_run:
             return self.result
 
