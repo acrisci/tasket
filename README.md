@@ -20,13 +20,40 @@ app = Tasket()
 
 @task
 def generate(args):
-    print('generating with args = %s' % args)
+    '''Generate the project'''
+    print('generating the project now with, oh, say cmake')
 
 @task(dependencies=['generate'])
 def build(args):
-    print('building with args = %s' % args)
+    '''Build the project'''
+    print('building the project now')
 
 app.run()
+```
+
+This gives the following program.
+
+```
+usage: example.py [-h] [targets [targets ...]]
+
+positional arguments:
+  targets
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+targets:
+  generate   - Generate the project
+  build      - Build the project
+```
+
+Now pass the targets you want to complete.
+
+```
+$ ./example-tasket.py build
+
+generating the project now with, oh, say cmake
+building the project now
 ```
 
 ## TODO
