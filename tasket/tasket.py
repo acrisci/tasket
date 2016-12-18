@@ -107,20 +107,28 @@ class Tasket():
                 parser.error('could not find target: %s' % target_name)
 
 
+        current_task = None
         try:
             # run the targets in order
             for name in args.targets:
                 task = Tasket.find(name)
                 # first run all the dependencies
                 for d in Tasket.get_dependencies(task):
+                    current_task = d
                     d.run(args, script_dir)
 
-
                 # run the task itself
+                current_task = task
                 task.run(args, script_dir)
+        except RecursionError as e:
+            # TODO detect circular dependencies in a nicer way
+            print('circular dependencies detected!')
+            sys.exit(1)
+
         except Exception as e:
             # TODO write the rety file
-            raise e
+            print('failed on %s' % current_task.name)
+            #raise e
 
 
 def task(name='', dependencies=[]):
