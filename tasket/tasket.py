@@ -79,9 +79,8 @@ class Tasket():
         self.parser.add_argument(*args, **kwargs)
 
 
-    def run(self, argv=sys.argv):
-        # XXX won't work if they chdir before the call to run
-        script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+    def run(self, argv=sys.argv,
+            working_dir=os.path.dirname(os.path.realpath(os.path.curdir))):
         parser = self.parser
 
         print('task runner running')
@@ -115,11 +114,13 @@ class Tasket():
                 # first run all the dependencies
                 for d in Tasket.get_dependencies(task):
                     current_task = d
-                    d.run(args, script_dir)
+                    os.chdir(working_dir)
+                    d.run(args)
 
                 # run the task itself
                 current_task = task
-                task.run(args, script_dir)
+                os.chdir(working_dir)
+                task.run(args)
         except RecursionError as e:
             # TODO detect circular dependencies in a nicer way
             print('circular dependencies detected!')

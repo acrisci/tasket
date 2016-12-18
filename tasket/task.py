@@ -18,9 +18,7 @@ class Task():
 
         return doc.lstrip().split("\n")[0].rstrip()
 
-    def run(self, args, cwd):
-        os.chdir(cwd)
-
+    def run(self, args):
         if self.has_run:
             return self.result
 
